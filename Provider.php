@@ -53,4 +53,18 @@ class Provider extends AbstractProvider
             'avatar'   => 'https://avatars.yandex.net/get-yapic/'.Arr::get($user, 'default_avatar_id').'/islands-200',
         ]);
     }
+
+    protected function getRefreshTokenResponse($refreshToken)
+    {
+        return json_decode($this->getHttpClient()->post($this->getTokenUrl(), [
+            RequestOptions::HEADERS => ['Accept' => 'application/json'],
+            RequestOptions::FORM_PARAMS => [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+                'code' => $this->getCode(),
+            ],
+        ])->getBody(), true);
+    }
 }
